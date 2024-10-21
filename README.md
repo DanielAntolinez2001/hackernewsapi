@@ -31,12 +31,6 @@ npm install
 ts-node src/server.ts
 ```
 
-## Uso
-
-```bash
-npm start
-```
-
 ## Endpoints
 
 | Método | Endpoint         | Descripción                        |
