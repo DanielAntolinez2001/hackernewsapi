@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Item {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime
+  author    String
+  title     String
+  url       String?
+  text      String?
+  points    Int
+  parentId  String?  @db.ObjectId
+  parent    Item?    @relation("ParentChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  Item[]   @relation("ParentChildren")
+}
+
+model User {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  username String  @unique
+  about    String?
+  karma    Int
+}
+
+model Search {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  url         String?
+  author      String
+  points      Int
+  numComments Int
+  createdAt   DateTime
+  query       String?
+  hitsPerPage Int?
+  page        Int?
+}
