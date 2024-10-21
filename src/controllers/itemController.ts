@@ -30,6 +30,61 @@ export const getItem = async (req: Request, res: Response): Promise<void> => {
 };
 
 /**
+ * Obtiene todos los items.
+ * @param req - Objeto de solicitud de Express.
+ * @param res - Objeto de respuesta de Express.
+ * @returns void
+ */
+export const getAllItems = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // Busca todos los items en la base de datos.
+    const items = await prisma.item.findMany();
+    // Responde con los items en formato JSON.
+    res.json(items);
+  } catch (error) {
+    // Si ocurre un error en el servidor, responde con un error 500.
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Obtiene ítems por rango de fechas de publicación.
+ * @param req - Objeto de solicitud de Express.
+ * @param res - Objeto de respuesta de Express.
+ * @returns void
+ */
+export const getItemsByDate = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { startDate, endDate } = req.query;
+
+  // Validar que se proporcionaron las fechas
+  if (!startDate || !endDate) {
+    res.status(400).json({ error: "Start date and end date are required" });
+    return;
+  }
+
+  try {
+    const items = await prisma.item.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(startDate as string), // Fecha de inicio
+          lte: new Date(endDate as string), // Fecha de fin
+        },
+      },
+    });
+
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
  * Crea un nuevo item.
  * @param req - Objeto de solicitud de Express.
  * @param res - Objeto de respuesta de Express.
@@ -41,7 +96,6 @@ export const createItem = async (
 ): Promise<void> => {
   const { author, title, url, text, points, parentId } = req.body;
   try {
-    // Crea un nuevo item en la base de datos con los datos proporcionados.
     const item = await prisma.item.create({
       data: {
         author,
@@ -53,14 +107,25 @@ export const createItem = async (
         createdAt: new Date(),
       },
     });
-    // Responde con el item creado y un estado 201.
+
+    // Aumentar el karma del autor
+    await prisma.user.update({
+      where: { username: author },
+      data: { karma: { increment: 1 } }, // Incrementar en 1
+    });
+
     res.status(201).json(item);
   } catch (error) {
-    // Si ocurre un error en el servidor, responde con un error 500.
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
+/**
+ * Actualiza un item por su ID.
+ * @param req - Objeto de solicitud de Express.
+ * @param res - Objeto de respuesta de Express.
+ * @returns void
+ */
 export const updateItem = async (
   req: Request,
   res: Response
@@ -78,6 +143,12 @@ export const updateItem = async (
   }
 };
 
+/**
+ * Elimina un item por su ID.
+ * @param req - Objeto de solicitud de Express.
+ * @param res - Objeto de respuesta de Express.
+ * @returns void
+ */
 export const deleteItem = async (
   req: Request,
   res: Response

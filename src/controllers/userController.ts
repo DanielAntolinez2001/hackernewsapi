@@ -27,6 +27,52 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+export const getAllUsers = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Obtiene usuarios por rango de fechas de creación.
+ * @param req - Objeto de solicitud de Express.
+ * @param res - Objeto de respuesta de Express.
+ * @returns void
+ */
+export const getUsersByDate = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { startDate, endDate } = req.query;
+
+  // Validar que se proporcionaron las fechas
+  if (!startDate || !endDate) {
+    res.status(400).json({ error: "Start date and end date are required" });
+    return;
+  }
+
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(startDate as string), // Fecha de inicio
+          lte: new Date(endDate as string), // Fecha de fin
+        },
+      },
+    });
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 /**
  * Crea un nuevo usuario.
  * @param req - Objeto de solicitud de Express.
@@ -44,6 +90,7 @@ export const createUser = async (
         username,
         about,
         karma,
+        createdAt: new Date(), // Asignar fecha de creación si es necesario
       },
     });
     res.status(201).json(user);
