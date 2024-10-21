@@ -33,17 +33,16 @@ npm start
 
 ## Endpoints
 
-| |-------------|----------------------|----------------------------------|
-Mé| GET | /items/:id | Obtiene un item por su ID |
-to| POST | /items | Crea un nuevo item |
-do| PUT | /items/:id | Actualiza un item por su ID |
-H| DELETE | /items/:id | Elimina un item por su ID |
-TT| GET | /users/:username | Obtiene un usuario por su nombre |
-P | POST | /users | Crea un nuevo usuario |
-| | PUT | /users/:username | Actualiza un usuario por su nombre |
-En| DELETE | /users/:username | Elimina un usuario por su nombre |
-dp
-oint | Descripción |
+| Método | Endpoint         | Descripción                        |
+| ------ | ---------------- | ---------------------------------- |
+| GET    | /items/:id       | Obtiene un item por su ID          |
+| POST   | /items           | Crea un nuevo item                 |
+| PUT    | /items/:id       | Actualiza un item por su ID        |
+| DELETE | /items/:id       | Elimina un item por su ID          |
+| GET    | /users/:username | Obtiene un usuario por su nombre   |
+| POST   | /users           | Crea un nuevo usuario              |
+| PUT    | /users/:username | Actualiza un usuario por su nombre |
+| DELETE | /users/:username | Elimina un usuario por su nombre   |
 
 ## Contribuir
 
